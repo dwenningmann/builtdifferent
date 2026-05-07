@@ -87,8 +87,8 @@ body { background:#1a1a1a; font-family:'DM Sans',sans-serif; min-height:100vh; d
     </div>
     <div class="size-row">
       <label>Grösse</label>
-      <input type="range" id="fontsize" min="14" max="38" value="26" oninput="update()">
-      <div class="size-val" id="size-display">26</div>
+      <input type="range" id="fontsize" min="3" max="9" value="5" step="0.5" oninput="update()">
+      <div class="size-val" id="size-display">5</div>
     </div>
     <button class="preview-btn" onclick="setMode('preview')">VORSCHAU & SCREENSHOT →</button>
   </div>
@@ -152,14 +152,15 @@ function update() {
   const l1 = document.getElementById('line1').value;
   const l2 = document.getElementById('line2').value;
   const l3 = document.getElementById('line3').value;
-  const fs = parseInt(document.getElementById('fontsize').value);
+  const fs = parseFloat(document.getElementById('fontsize').value);
   document.getElementById('size-display').textContent = fs;
   let html = '';
   if (l1) html += l1 + '<br>';
   if (l2) html += '<span class="orange">' + l2 + '</span>';
   if (l3) html += '<br>' + l3;
-  document.getElementById('preview-text').innerHTML = html;
-  document.getElementById('preview-text').style.fontSize = fs + 'px';
+  const el = document.getElementById('preview-text');
+  el.innerHTML = html;
+  el.style.setProperty('font-size', fs + 'vw', 'important');
 }
 function setMode(mode) {
   const edit = document.getElementById('edit-mode');
