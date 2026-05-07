@@ -2,223 +2,148 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>DW · Quote Template</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>DW · Quote Maker</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:#2a2a2a; font-family:'DM Sans',sans-serif; display:flex; flex-direction:column; align-items:center; padding:40px 24px; gap:32px; }
-
-.controls {
-  background:#f0ede8;
-  padding:24px 28px;
-  width:500px;
-  max-width:100%;
-}
-.controls-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:0.08em; color:#1a1a1a; margin-bottom:16px; }
-.field { margin-bottom:14px; }
-.field label { display:block; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#888; margin-bottom:6px; font-weight:500; }
-.field input, .field textarea, .field select {
-  width:100%;
-  background:#fff;
-  border:0.5px solid #d0cdc8;
-  color:#1a1a1a;
-  padding:10px 14px;
-  font-family:'DM Sans',sans-serif;
-  font-size:14px;
-  outline:none;
-}
-.field textarea { resize:vertical; min-height:80px; line-height:1.5; }
-.field input:focus, .field textarea:focus { border-color:#E8541A; }
-.row { display:flex; gap:10px; }
-.row .field { flex:1; }
-.btn-row { display:flex; gap:10px; margin-top:6px; }
-.btn { padding:10px 20px; font-family:'DM Sans',sans-serif; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; border:none; transition:background 0.2s; }
-.btn-primary { background:#E8541A; color:#fff; }
-.btn-primary:hover { background:#FF6B35; }
-.btn-secondary { background:#1a1a1a; color:#f5f4f0; }
-.btn-secondary:hover { background:#333; }
-.hint-small { font-size:11px; color:#888; margin-top:8px; line-height:1.6; }
-
-/* ── QUOTE CARD 1080x1080 simuliert bei 500px ── */
-.card-wrap {
-  position: relative;
-}
-.card-label {
-  font-size:10px; letter-spacing:0.1em; text-transform:uppercase;
-  color:rgba(245,244,240,0.3); text-align:center; margin-bottom:8px;
-}
-
-.quote-card {
-  width: 500px;
-  height: 500px;
-  background: #1a1a1a;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 40px;
-  flex-shrink: 0;
-}
-
-.qgrid {
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(245,244,240,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(245,244,240,0.03) 1px, transparent 1px);
-  background-size: 50px 50px;
-}
-.qglow {
-  position: absolute;
-  bottom: -30%; left: -10%;
-  width: 70%; height: 80%;
-  background: radial-gradient(ellipse, rgba(232,84,26,0.1) 0%, transparent 70%);
-}
-.qtop-glow {
-  position: absolute;
-  top: -20%; right: -10%;
-  width: 60%; height: 60%;
-  background: radial-gradient(ellipse, rgba(232,84,26,0.05) 0%, transparent 70%);
-}
-.qaccent {
-  position: absolute;
-  top: 0; right: 0;
-  width: 4px; height: 100%;
-  background: #E8541A;
-  opacity: 0.5;
-}
-.qtop-bar {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: transparent;
-}
-.qnum {
-  position: absolute;
-  top: 28px; left: 40px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 80px;
-  color: rgba(245,244,240,0.05);
-  line-height: 1;
-  letter-spacing: -2px;
-}
-.qlogo {
-  position: absolute;
-  top: 32px; right: 48px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 13px;
-  letter-spacing: 0.1em;
-  color: rgba(245,244,240,0.2);
-}
-.qlogo span { color: rgba(232,84,26,0.5); }
-
-.qtext {
-  position: relative;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.03em;
-  line-height: 1.1;
-  color: #f5f4f0;
-  margin-bottom: 18px;
-  white-space: pre-line;
-}
-.qtext .orange { color: #E8541A; }
-
-.qbar {
-  position: relative;
-  height: 2px;
-  background: #E8541A;
-  margin-bottom: 12px;
-  width: 40px;
-}
-.qsub {
-  position: relative;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: rgba(245,244,240,0.25);
-  text-transform: uppercase;
-}
-.qsub strong { color: rgba(232,84,26,0.5); }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { background:#1a1a1a; font-family:'DM Sans',sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+.header { background:#1a1a1a; padding:16px 20px 12px; border-bottom:0.5px solid rgba(245,244,240,0.08); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10; }
+.header-logo { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:0.1em; color:#f5f4f0; }
+.header-logo span { color:#E8541A; }
+.header-sub { font-size:10px; color:rgba(245,244,240,0.4); letter-spacing:0.08em; }
+.mode-toggle { display:flex; margin:16px 16px 0; background:rgba(245,244,240,0.06); border-radius:4px; padding:3px; }
+.mode-btn { flex:1; padding:8px; font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:rgba(245,244,240,0.4); background:transparent; border:none; cursor:pointer; border-radius:3px; transition:all 0.2s; }
+.mode-btn.active { background:#E8541A; color:#fff; }
+.edit-mode { display:block; }
+.preview-mode { display:none; }
+.controls { padding:20px 16px; display:flex; flex-direction:column; gap:14px; }
+.field label { display:block; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(245,244,240,0.4); margin-bottom:6px; font-weight:500; }
+.field input { width:100%; background:rgba(245,244,240,0.06); border:0.5px solid rgba(245,244,240,0.12); color:#f5f4f0; padding:12px 14px; font-family:'DM Sans',sans-serif; font-size:16px; outline:none; border-radius:3px; -webkit-appearance:none; }
+.field input:focus { border-color:#E8541A; }
+.field input::placeholder { color:rgba(245,244,240,0.2); }
+.size-row { display:flex; align-items:center; gap:12px; }
+.size-row label { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:rgba(245,244,240,0.4); white-space:nowrap; }
+.size-row input[type=range] { flex:1; accent-color:#E8541A; }
+.size-val { font-family:'Bebas Neue',sans-serif; font-size:18px; color:#E8541A; min-width:36px; text-align:right; }
+.preview-btn { width:100%; padding:16px; background:#E8541A; color:#fff; border:none; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:0.1em; cursor:pointer; border-radius:3px; margin-top:4px; }
+.ideas-title { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#E8541A; padding:0 16px; margin-top:4px; font-weight:500; }
+.ideas-scroll { display:flex; gap:10px; padding:10px 16px 20px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.ideas-scroll::-webkit-scrollbar { display:none; }
+.idea-chip { flex-shrink:0; background:rgba(245,244,240,0.06); border:0.5px solid rgba(245,244,240,0.12); padding:10px 14px; cursor:pointer; border-radius:3px; max-width:200px; transition:border-color 0.2s; }
+.idea-chip:active { border-color:#E8541A; background:rgba(232,84,26,0.1); }
+.idea-chip-q { font-size:12px; color:#f5f4f0; line-height:1.5; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.idea-chip-sub { font-size:10px; color:#E8541A; margin-top:3px; }
+.preview-wrap { display:flex; flex-direction:column; align-items:center; padding:16px; gap:14px; }
+.quote-card { width:100%; aspect-ratio:1/1; background:#1a1a1a; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; padding:8%; }
+.qgrid { position:absolute; inset:0; background-image:linear-gradient(rgba(245,244,240,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,244,240,0.03) 1px,transparent 1px); background-size:8% 8%; }
+.qglow-b { position:absolute; bottom:-30%; left:-10%; width:70%; height:80%; background:radial-gradient(ellipse,rgba(232,84,26,0.1) 0%,transparent 70%); }
+.qglow-t { position:absolute; top:-20%; right:-10%; width:60%; height:60%; background:radial-gradient(ellipse,rgba(232,84,26,0.05) 0%,transparent 70%); }
+.qaccent { position:absolute; top:0; right:0; width:1%; height:100%; background:#E8541A; opacity:0.5; }
+.qlogo { position:absolute; top:7%; right:9%; font-family:'Bebas Neue',sans-serif; letter-spacing:0.1em; color:rgba(245,244,240,0.2); font-size:clamp(9px,2.8vw,13px); }
+.qlogo span { color:rgba(232,84,26,0.5); }
+.qtext { position:relative; font-family:'Bebas Neue',sans-serif; letter-spacing:0.03em; line-height:1.1; color:#f5f4f0; margin-bottom:5%; }
+.qtext .orange { color:#E8541A; }
+.qbar { position:relative; height:2px; background:#E8541A; margin-bottom:4%; width:10%; min-width:28px; }
+.qsub { position:relative; font-family:'DM Sans',sans-serif; font-size:clamp(8px,2vw,11px); letter-spacing:0.12em; color:rgba(245,244,240,0.25); text-transform:uppercase; }
+.qsub strong { color:rgba(232,84,26,0.5); }
+.screenshot-hint { background:rgba(232,84,26,0.1); border:0.5px solid rgba(232,84,26,0.3); padding:14px 16px; width:100%; border-radius:3px; }
+.screenshot-hint-title { font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#E8541A; font-weight:500; margin-bottom:6px; }
+.screenshot-hint-text { font-size:13px; color:rgba(245,244,240,0.6); line-height:1.65; }
+.screenshot-hint-text strong { color:#f5f4f0; }
+.back-btn { width:100%; padding:14px; background:rgba(245,244,240,0.06); color:rgba(245,244,240,0.5); border:0.5px solid rgba(245,244,240,0.1); font-family:'DM Sans',sans-serif; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; border-radius:3px; }
 </style>
 </head>
 <body>
 
-<!-- CONTROLS -->
-<div class="controls">
-  <div class="controls-title">Quote bearbeiten</div>
-
-  <div class="field">
-    <label>Zeile 1 (normal, weiss)</label>
-    <input type="text" id="line1" value="Du hast keine Zeit." oninput="update()">
-  </div>
-  <div class="field">
-    <label>Zeile 2 (orange — die Kernaussage)</label>
-    <input type="text" id="line2" value="Du hast keine Prioritaeten." oninput="update()">
-  </div>
-  <div class="field">
-    <label>Zeile 3 (optional, weiss)</label>
-    <input type="text" id="line3" value="" placeholder="leer lassen wenn nicht gebraucht" oninput="update()">
-  </div>
-
-  <div class="field">
-    <label>Schriftgrösse (px)</label>
-    <input type="range" id="fontsize" min="18" max="42" value="30" oninput="update()">
-  </div>
-
-  <div class="btn-row">
-    <button class="btn btn-primary" onclick="copyQuotes()">Neue Quote-Ideen ↗</button>
-    <button class="btn btn-secondary" onclick="screenshotHint()">Screenshot-Tipp</button>
-  </div>
-  <p class="hint-small" id="hint-text">Passe den Text an → Screenshot der Karte unten → in Canva auf 1080×1080px skalieren → auf Instagram posten.</p>
-</div>
-
-<!-- QUOTE CARD -->
-<div class="card-wrap">
-  <div class="card-label">Vorschau · 500×500px (= 1080×1080px auf Instagram)</div>
-  <div class="quote-card" id="quote-card">
-    <div class="qgrid"></div>
-    <div class="qglow"></div>
-    <div class="qtop-glow"></div>
-    <div class="qaccent"></div>
-    <div class="qtop-bar"></div>
-    <div class="qlogo">DW<span>·</span>BD</div>
-
-    <div class="qtext" id="preview-text">
-      Du hast keine Zeit.<br><span class="orange">Du hast keine Prioritaeten.</span>
-    </div>
-    <div class="qbar"></div>
-    <div class="qsub">DW · <strong>Built Different</strong></div>
+<div class="header">
+  <div>
+    <div class="header-logo">DW<span>·</span>BUILT DIFFERENT</div>
+    <div class="header-sub">Quote Maker</div>
   </div>
 </div>
 
-<!-- QUOTE IDEEN -->
-<div class="controls" id="ideas-box" style="display:none;">
-  <div class="controls-title">Quote-Ideen · Deine Nische</div>
-  <div style="display:flex; flex-direction:column; gap:10px;">
-    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
-      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 1</div>
-      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Beruflich auf Kurs."<br>Orange: "Koerperlich auf Autopilot?"<br>Zeile 3: "Das muss nicht so bleiben."</div>
+<div class="mode-toggle">
+  <button class="mode-btn active" id="btn-edit" onclick="setMode('edit')">✏️ Bearbeiten</button>
+  <button class="mode-btn" id="btn-preview" onclick="setMode('preview')">📸 Screenshot</button>
+</div>
+
+<!-- EDIT -->
+<div class="edit-mode" id="edit-mode">
+  <div class="controls">
+    <div class="field">
+      <label>Zeile 1 — weiss</label>
+      <input type="text" id="line1" value="Du hast keine Zeit." oninput="update()" autocomplete="off" autocorrect="off">
     </div>
-    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
-      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 2</div>
-      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Ein Plan der nicht zu deinem"<br>Orange: "Leben passt — ist kein Plan."<br>Zeile 3: ""</div>
+    <div class="field">
+      <label>Zeile 2 — orange (Kernaussage)</label>
+      <input type="text" id="line2" value="Du hast keine Prioritaeten." oninput="update()" autocomplete="off" autocorrect="off">
     </div>
-    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
-      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 3</div>
-      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Mit 25 war Disziplin optional."<br>Orange: "Mit 40 ist sie Pflicht."<br>Zeile 3: ""</div>
+    <div class="field">
+      <label>Zeile 3 — weiss (optional)</label>
+      <input type="text" id="line3" placeholder="leer lassen wenn nicht gebraucht" oninput="update()" autocomplete="off" autocorrect="off">
     </div>
-    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
-      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 4</div>
-      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Dein Koerper erinnert sich"<br>Orange: "an jeden Tag den du nicht trainiert hast."<br>Zeile 3: ""</div>
+    <div class="size-row">
+      <label>Grösse</label>
+      <input type="range" id="fontsize" min="14" max="38" value="26" oninput="update()">
+      <div class="size-val" id="size-display">26</div>
     </div>
-    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
-      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 5</div>
-      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Kein Trainer der dir sagt"<br>Orange: "was du hoeren willst."<br>Zeile 3: "Einer der dir zeigt was funktioniert."</div>
+    <button class="preview-btn" onclick="setMode('preview')">VORSCHAU & SCREENSHOT →</button>
+  </div>
+
+  <div class="ideas-title">Quick-Ideen</div>
+  <div class="ideas-scroll">
+    <div class="idea-chip" onclick="loadIdea('Beruflich auf Kurs.','Koerperlich auf Autopilot?','Das muss nicht so bleiben.')">
+      <div class="idea-chip-q">Beruflich auf Kurs...</div>
+      <div class="idea-chip-sub">Antippen zum laden</div>
     </div>
-    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
-      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 6</div>
-      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Der Unterschied zwischen"<br>Orange: "Vorsatz und Ergebnis?"<br>Zeile 3: "Ein System."</div>
+    <div class="idea-chip" onclick="loadIdea('Mit 25 war Disziplin optional.','Mit 40 ist sie Pflicht.','')">
+      <div class="idea-chip-q">Mit 25 war Disziplin...</div>
+      <div class="idea-chip-sub">Antippen zum laden</div>
     </div>
+    <div class="idea-chip" onclick="loadIdea('Ein Plan der nicht zu deinem','Leben passt — ist kein Plan.','')">
+      <div class="idea-chip-q">Ein Plan der nicht...</div>
+      <div class="idea-chip-sub">Antippen zum laden</div>
+    </div>
+    <div class="idea-chip" onclick="loadIdea('Kein Trainer der dir sagt','was du hoeren willst.','Einer der zeigt was funktioniert.')">
+      <div class="idea-chip-q">Kein Trainer der...</div>
+      <div class="idea-chip-sub">Antippen zum laden</div>
+    </div>
+    <div class="idea-chip" onclick="loadIdea('Der Unterschied zwischen','Vorsatz und Ergebnis?','Ein System.')">
+      <div class="idea-chip-q">Der Unterschied...</div>
+      <div class="idea-chip-sub">Antippen zum laden</div>
+    </div>
+    <div class="idea-chip" onclick="loadIdea('Dein Koerper erinnert sich','an jeden Tag','den du nicht trainiert hast.')">
+      <div class="idea-chip-q">Dein Koerper erinnert...</div>
+      <div class="idea-chip-sub">Antippen zum laden</div>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW -->
+<div class="preview-mode" id="preview-mode">
+  <div class="preview-wrap">
+    <div class="quote-card" id="quote-card">
+      <div class="qgrid"></div>
+      <div class="qglow-b"></div>
+      <div class="qglow-t"></div>
+      <div class="qaccent"></div>
+      <div class="qlogo">DW<span>·</span>BD</div>
+      <div class="qtext" id="preview-text">Du hast keine Zeit.<br><span class="orange">Du hast keine Prioritaeten.</span></div>
+      <div class="qbar"></div>
+      <div class="qsub">DW · <strong>Built Different</strong></div>
+    </div>
+    <div class="screenshot-hint">
+      <div class="screenshot-hint-title">📸 Jetzt Screenshot machen</div>
+      <div class="screenshot-hint-text">
+        <strong>iPhone:</strong> Seitentaste + Lautstärke hoch gleichzeitig.<br>
+        <strong>Android:</strong> Power + Lautstärke runter gleichzeitig.<br><br>
+        Foto zuschneiden → nur die Karte behalten → direkt auf Instagram hochladen.
+      </div>
+    </div>
+    <button class="back-btn" onclick="setMode('edit')">← Zurück zum Bearbeiten</button>
   </div>
 </div>
 
@@ -227,8 +152,8 @@ function update() {
   const l1 = document.getElementById('line1').value;
   const l2 = document.getElementById('line2').value;
   const l3 = document.getElementById('line3').value;
-  const fs = document.getElementById('fontsize').value;
-
+  const fs = parseInt(document.getElementById('fontsize').value);
+  document.getElementById('size-display').textContent = fs;
   let html = '';
   if (l1) html += l1 + '<br>';
   if (l2) html += '<span class="orange">' + l2 + '</span>';
@@ -236,29 +161,29 @@ function update() {
   document.getElementById('preview-text').innerHTML = html;
   document.getElementById('preview-text').style.fontSize = fs + 'px';
 }
-
-function copyQuotes() {
-  const box = document.getElementById('ideas-box');
-  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+function setMode(mode) {
+  const edit = document.getElementById('edit-mode');
+  const preview = document.getElementById('preview-mode');
+  if (mode === 'preview') {
+    edit.style.display = 'none';
+    preview.style.display = 'block';
+    document.getElementById('btn-edit').classList.remove('active');
+    document.getElementById('btn-preview').classList.add('active');
+    update();
+    setTimeout(() => document.getElementById('quote-card').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+  } else {
+    edit.style.display = 'block';
+    preview.style.display = 'none';
+    document.getElementById('btn-edit').classList.add('active');
+    document.getElementById('btn-preview').classList.remove('active');
+  }
 }
-
-function loadIdea(el) {
-  const lines = el.querySelectorAll('div')[1].innerHTML.split('<br>');
-  const l1 = lines[0].replace('Zeile 1: "','').replace('"','').trim();
-  const l2 = lines[1].replace('Orange: "','').replace('"','').trim();
-  const l3 = lines[2] ? lines[2].replace('Zeile 3: "','').replace('"','').trim() : '';
+function loadIdea(l1, l2, l3) {
   document.getElementById('line1').value = l1;
   document.getElementById('line2').value = l2;
-  document.getElementById('line3').value = l3;
+  document.getElementById('line3').value = l3 || '';
   update();
-  document.getElementById('ideas-box').style.display = 'none';
 }
-
-function screenshotHint() {
-  const h = document.getElementById('hint-text');
-  h.innerHTML = '<strong>Mac:</strong> Cmd+Shift+4 → Karte markieren → gespeichert auf Desktop.<br><strong>Windows:</strong> Win+Shift+S → Karte markieren → in Canva einfügen (1080×1080px).<br><strong>Oder:</strong> Rechtsklick auf die Karte → "Als Bild speichern" (je nach Browser).';
-}
-
 update();
 </script>
 </body>
