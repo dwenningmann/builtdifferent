@@ -54,6 +54,23 @@ body { background:#1a1a1a; font-family:'DM Sans',sans-serif; min-height:100vh; d
 .screenshot-hint-text { font-size:13px; color:rgba(245,244,240,0.6); line-height:1.65; }
 .screenshot-hint-text strong { color:#f5f4f0; }
 .back-btn { width:100%; padding:14px; background:rgba(245,244,240,0.06); color:rgba(245,244,240,0.5); border:0.5px solid rgba(245,244,240,0.1); font-family:'DM Sans',sans-serif; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; border-radius:3px; }
+.caption-mode { display:none; padding:16px; flex-direction:column; gap:14px; }
+.caption-field label { display:block; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(245,244,240,0.4); margin-bottom:6px; font-weight:500; }
+.caption-field textarea { width:100%; background:rgba(245,244,240,0.06); border:0.5px solid rgba(245,244,240,0.12); color:#f5f4f0; padding:12px 14px; font-family:'DM Sans',sans-serif; font-size:15px; outline:none; border-radius:3px; resize:none; line-height:1.6; }
+.caption-field textarea:focus { border-color:#E8541A; }
+.caption-field textarea::placeholder { color:rgba(245,244,240,0.2); }
+.gen-btn { width:100%; padding:16px; background:#E8541A; color:#fff; border:none; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:0.1em; cursor:pointer; border-radius:3px; }
+.gen-btn:disabled { background:rgba(232,84,26,0.3); cursor:not-allowed; }
+.result-box { background:rgba(245,244,240,0.04); border:0.5px solid rgba(245,244,240,0.12); border-radius:3px; padding:16px; min-height:100px; }
+.result-text { font-size:14px; color:#f5f4f0; line-height:1.75; white-space:pre-wrap; }
+.result-placeholder { font-size:13px; color:rgba(245,244,240,0.25); line-height:1.6; }
+.copy-caption-btn { width:100%; padding:12px; background:rgba(245,244,240,0.06); color:rgba(245,244,240,0.6); border:0.5px solid rgba(245,244,240,0.1); font-family:'DM Sans',sans-serif; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; border-radius:3px; display:none; }
+.copy-caption-btn.visible { display:block; }
+.copy-caption-btn.done { background:rgba(46,125,50,0.2); color:#81c784; }
+.tone-row { display:flex; gap:8px; flex-wrap:wrap; }
+.tone-chip { padding:7px 12px; background:rgba(245,244,240,0.06); border:0.5px solid rgba(245,244,240,0.12); color:rgba(245,244,240,0.5); font-size:12px; cursor:pointer; border-radius:3px; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+.tone-chip.active { background:rgba(232,84,26,0.15); border-color:rgba(232,84,26,0.4); color:#E8541A; }
+@keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
 </style>
 </head>
 <body>
@@ -66,8 +83,9 @@ body { background:#1a1a1a; font-family:'DM Sans',sans-serif; min-height:100vh; d
 </div>
 
 <div class="mode-toggle">
-  <button class="mode-btn active" id="btn-edit" onclick="setMode('edit')">✏️ Bearbeiten</button>
+  <button class="mode-btn active" id="btn-edit" onclick="setMode('edit')">✏️ Quote</button>
   <button class="mode-btn" id="btn-preview" onclick="setMode('preview')">📸 Screenshot</button>
+  <button class="mode-btn" id="btn-caption" onclick="setMode('caption')">🤖 Caption</button>
 </div>
 
 <!-- EDIT -->
@@ -147,7 +165,40 @@ body { background:#1a1a1a; font-family:'DM Sans',sans-serif; min-height:100vh; d
   </div>
 </div>
 
+<!-- CAPTION MODE -->
+<div class="caption-mode" id="caption-mode">
+  <div style="display:flex; flex-direction:column; gap:14px; padding-top:4px;">
+
+    <div class="caption-field">
+      <label>Dein Quote (wird automatisch übernommen)</label>
+      <textarea id="caption-quote" rows="3" placeholder="Quote hier eingeben oder aus dem Quote-Tab übernehmen..."></textarea>
+    </div>
+
+    <div class="caption-field">
+      <label>Ton der Caption</label>
+      <div class="tone-row">
+        <div class="tone-chip active" onclick="selectTone(this, 'direkt')">Direkt</div>
+        <div class="tone-chip" onclick="selectTone(this, 'persönlich')">Persönlich</div>
+        <div class="tone-chip" onclick="selectTone(this, 'provokativ')">Provokativ</div>
+        <div class="tone-chip" onclick="selectTone(this, 'motivierend')">Motivierend</div>
+      </div>
+    </div>
+
+    <button class="gen-btn" id="gen-btn" onclick="generateCaption()">CAPTION GENERIEREN →</button>
+
+    <div class="result-box" id="result-box">
+      <div class="result-placeholder" id="result-placeholder">Caption erscheint hier — tippe auf "Generieren" um zu starten.</div>
+      <div class="result-text" id="result-text" style="display:none;"></div>
+    </div>
+
+    <button class="copy-caption-btn" id="copy-caption-btn" onclick="copyCaption()">Caption kopieren →</button>
+
+  </div>
+</div>
+
 <script>
+let selectedTone = 'direkt';
+
 function update() {
   const l1 = document.getElementById('line1').value;
   const l2 = document.getElementById('line2').value;
@@ -162,29 +213,115 @@ function update() {
   el.innerHTML = html;
   el.style.setProperty('font-size', fs + 'vw', 'important');
 }
+
 function setMode(mode) {
-  const edit = document.getElementById('edit-mode');
-  const preview = document.getElementById('preview-mode');
-  if (mode === 'preview') {
-    edit.style.display = 'none';
-    preview.style.display = 'block';
-    document.getElementById('btn-edit').classList.remove('active');
+  document.getElementById('edit-mode').style.display = 'none';
+  document.getElementById('preview-mode').style.display = 'none';
+  document.getElementById('caption-mode').style.display = 'none';
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+
+  if (mode === 'edit') {
+    document.getElementById('edit-mode').style.display = 'block';
+    document.getElementById('btn-edit').classList.add('active');
+  } else if (mode === 'preview') {
+    document.getElementById('preview-mode').style.display = 'block';
     document.getElementById('btn-preview').classList.add('active');
     update();
     setTimeout(() => document.getElementById('quote-card').scrollIntoView({behavior:'smooth',block:'start'}), 100);
-  } else {
-    edit.style.display = 'block';
-    preview.style.display = 'none';
-    document.getElementById('btn-edit').classList.add('active');
-    document.getElementById('btn-preview').classList.remove('active');
+  } else if (mode === 'caption') {
+    document.getElementById('caption-mode').style.display = 'flex';
+    document.getElementById('btn-caption').classList.add('active');
+    // Auto-fill quote from edit fields
+    const l1 = document.getElementById('line1').value;
+    const l2 = document.getElementById('line2').value;
+    const l3 = document.getElementById('line3').value;
+    const combined = [l1, l2, l3].filter(Boolean).join(' ');
+    if (combined) document.getElementById('caption-quote').value = combined;
   }
 }
+
+function selectTone(el, tone) {
+  document.querySelectorAll('.tone-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedTone = tone;
+}
+
+async function generateCaption() {
+  const quote = document.getElementById('caption-quote').value.trim();
+  if (!quote) { document.getElementById('caption-quote').focus(); return; }
+
+  const btn = document.getElementById('gen-btn');
+  const placeholder = document.getElementById('result-placeholder');
+  const resultText = document.getElementById('result-text');
+  const copyBtn = document.getElementById('copy-caption-btn');
+
+  btn.disabled = true;
+  btn.textContent = 'Generiere...';
+  placeholder.style.display = 'block';
+  placeholder.textContent = 'Wird geschrieben...';
+  resultText.style.display = 'none';
+  copyBtn.classList.remove('visible');
+
+  const prompt = `Du bist David Wenningmann. Mitte 40, Vater, Unternehmer, Personal Trainer seit 20 Jahren. Du coachst berufstaetige Maenner 1:1 online. Deine Marke heisst "DW · Built Different". Dein Ton: direkt, ehrlich, maskulin, keine leeren Versprechen, kein Bullshit, keine Emojis ausser maximal einem am Anfang.
+
+Schreibe eine Instagram Caption fuer diesen Quote-Post:
+"${quote}"
+
+Ton: ${selectedTone}
+
+Die Caption soll:
+- Mit einem starken Hook-Satz beginnen (1 Zeile)
+- 3-5 Saetze Kontext oder persoenliche Geschichte dazu
+- 1 klarer Call-to-Action am Ende (z.B. "Link in der Bio" oder "Schreib mir wenn du dich wiedererkennst")
+- Passende Hashtags in einer eigenen Zeile ganz unten (8-10 Stueck, auf Deutsch und Englisch gemischt)
+
+Schreibe auf Deutsch. Kein "ich" am Satzanfang. Kein uebertriebenes Pathos.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.[0]?.text || 'Fehler beim Generieren — bitte nochmal versuchen.';
+
+    placeholder.style.display = 'none';
+    resultText.style.display = 'block';
+    resultText.textContent = text;
+    copyBtn.classList.add('visible');
+
+  } catch (err) {
+    placeholder.style.display = 'block';
+    placeholder.textContent = 'Verbindungsfehler — bitte nochmal versuchen.';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'NOCHMAL GENERIEREN →';
+}
+
+function copyCaption() {
+  const text = document.getElementById('result-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-caption-btn');
+    btn.textContent = 'Kopiert ✓';
+    btn.classList.add('done');
+    setTimeout(() => { btn.textContent = 'Caption kopieren →'; btn.classList.remove('done'); }, 2500);
+  });
+}
+
 function loadIdea(l1, l2, l3) {
   document.getElementById('line1').value = l1;
   document.getElementById('line2').value = l2;
   document.getElementById('line3').value = l3 || '';
   update();
 }
+
 update();
 </script>
 </body>
