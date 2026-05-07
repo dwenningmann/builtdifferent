@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>DW · Quote Template</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#2a2a2a; font-family:'DM Sans',sans-serif; display:flex; flex-direction:column; align-items:center; padding:40px 24px; gap:32px; }
+
+.controls {
+  background:#f0ede8;
+  padding:24px 28px;
+  width:500px;
+  max-width:100%;
+}
+.controls-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:0.08em; color:#1a1a1a; margin-bottom:16px; }
+.field { margin-bottom:14px; }
+.field label { display:block; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#888; margin-bottom:6px; font-weight:500; }
+.field input, .field textarea, .field select {
+  width:100%;
+  background:#fff;
+  border:0.5px solid #d0cdc8;
+  color:#1a1a1a;
+  padding:10px 14px;
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;
+  outline:none;
+}
+.field textarea { resize:vertical; min-height:80px; line-height:1.5; }
+.field input:focus, .field textarea:focus { border-color:#E8541A; }
+.row { display:flex; gap:10px; }
+.row .field { flex:1; }
+.btn-row { display:flex; gap:10px; margin-top:6px; }
+.btn { padding:10px 20px; font-family:'DM Sans',sans-serif; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; border:none; transition:background 0.2s; }
+.btn-primary { background:#E8541A; color:#fff; }
+.btn-primary:hover { background:#FF6B35; }
+.btn-secondary { background:#1a1a1a; color:#f5f4f0; }
+.btn-secondary:hover { background:#333; }
+.hint-small { font-size:11px; color:#888; margin-top:8px; line-height:1.6; }
+
+/* ── QUOTE CARD 1080x1080 simuliert bei 500px ── */
+.card-wrap {
+  position: relative;
+}
+.card-label {
+  font-size:10px; letter-spacing:0.1em; text-transform:uppercase;
+  color:rgba(245,244,240,0.3); text-align:center; margin-bottom:8px;
+}
+
+.quote-card {
+  width: 500px;
+  height: 500px;
+  background: #1a1a1a;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px;
+  flex-shrink: 0;
+}
+
+.qgrid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(245,244,240,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,244,240,0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.qglow {
+  position: absolute;
+  bottom: -30%; left: -10%;
+  width: 70%; height: 80%;
+  background: radial-gradient(ellipse, rgba(232,84,26,0.1) 0%, transparent 70%);
+}
+.qtop-glow {
+  position: absolute;
+  top: -20%; right: -10%;
+  width: 60%; height: 60%;
+  background: radial-gradient(ellipse, rgba(232,84,26,0.05) 0%, transparent 70%);
+}
+.qaccent {
+  position: absolute;
+  top: 0; right: 0;
+  width: 4px; height: 100%;
+  background: #E8541A;
+  opacity: 0.5;
+}
+.qtop-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: transparent;
+}
+.qnum {
+  position: absolute;
+  top: 28px; left: 40px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px;
+  color: rgba(245,244,240,0.05);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+.qlogo {
+  position: absolute;
+  top: 32px; right: 48px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: rgba(245,244,240,0.2);
+}
+.qlogo span { color: rgba(232,84,26,0.5); }
+
+.qtext {
+  position: relative;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+  color: #f5f4f0;
+  margin-bottom: 18px;
+  white-space: pre-line;
+}
+.qtext .orange { color: #E8541A; }
+
+.qbar {
+  position: relative;
+  height: 2px;
+  background: #E8541A;
+  margin-bottom: 12px;
+  width: 40px;
+}
+.qsub {
+  position: relative;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: rgba(245,244,240,0.25);
+  text-transform: uppercase;
+}
+.qsub strong { color: rgba(232,84,26,0.5); }
+</style>
+</head>
+<body>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="controls-title">Quote bearbeiten</div>
+
+  <div class="field">
+    <label>Zeile 1 (normal, weiss)</label>
+    <input type="text" id="line1" value="Du hast keine Zeit." oninput="update()">
+  </div>
+  <div class="field">
+    <label>Zeile 2 (orange — die Kernaussage)</label>
+    <input type="text" id="line2" value="Du hast keine Prioritaeten." oninput="update()">
+  </div>
+  <div class="field">
+    <label>Zeile 3 (optional, weiss)</label>
+    <input type="text" id="line3" value="" placeholder="leer lassen wenn nicht gebraucht" oninput="update()">
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>Schriftgrösse (px)</label>
+      <input type="range" id="fontsize" min="18" max="42" value="30" oninput="update()">
+    </div>
+    <div class="field">
+      <label>Nr.</label>
+      <input type="text" id="qnumber" value="01" oninput="update()" style="max-width:60px;">
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="copyQuotes()">Neue Quote-Ideen ↗</button>
+    <button class="btn btn-secondary" onclick="screenshotHint()">Screenshot-Tipp</button>
+  </div>
+  <p class="hint-small" id="hint-text">Passe den Text an → Screenshot der Karte unten → in Canva auf 1080×1080px skalieren → auf Instagram posten.</p>
+</div>
+
+<!-- QUOTE CARD -->
+<div class="card-wrap">
+  <div class="card-label">Vorschau · 500×500px (= 1080×1080px auf Instagram)</div>
+  <div class="quote-card" id="quote-card">
+    <div class="qgrid"></div>
+    <div class="qglow"></div>
+    <div class="qtop-glow"></div>
+    <div class="qaccent"></div>
+    <div class="qtop-bar"></div>
+    <div class="qnum" id="preview-num">01</div>
+    <div class="qlogo">DW<span>·</span>BD</div>
+
+    <div class="qtext" id="preview-text">
+      Du hast keine Zeit.<br><span class="orange">Du hast keine Prioritaeten.</span>
+    </div>
+    <div class="qbar"></div>
+    <div class="qsub">DW · <strong>Built Different</strong></div>
+  </div>
+</div>
+
+<!-- QUOTE IDEEN -->
+<div class="controls" id="ideas-box" style="display:none;">
+  <div class="controls-title">Quote-Ideen · Deine Nische</div>
+  <div style="display:flex; flex-direction:column; gap:10px;">
+    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
+      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 1</div>
+      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Beruflich auf Kurs."<br>Orange: "Koerperlich auf Autopilot?"<br>Zeile 3: "Das muss nicht so bleiben."</div>
+    </div>
+    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
+      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 2</div>
+      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Ein Plan der nicht zu deinem"<br>Orange: "Leben passt — ist kein Plan."<br>Zeile 3: ""</div>
+    </div>
+    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
+      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 3</div>
+      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Mit 25 war Disziplin optional."<br>Orange: "Mit 40 ist sie Pflicht."<br>Zeile 3: ""</div>
+    </div>
+    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
+      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 4</div>
+      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Dein Koerper erinnert sich"<br>Orange: "an jeden Tag den du nicht trainiert hast."<br>Zeile 3: ""</div>
+    </div>
+    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
+      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 5</div>
+      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Kein Trainer der dir sagt"<br>Orange: "was du hoeren willst."<br>Zeile 3: "Einer der dir zeigt was funktioniert."</div>
+    </div>
+    <div class="idea" onclick="loadIdea(this)" style="padding:12px; background:#fff; border:0.5px solid #d0cdc8; cursor:pointer;">
+      <div style="font-size:11px; color:#E8541A; letter-spacing:0.06em; margin-bottom:4px;">QUOTE 6</div>
+      <div style="font-size:13px; color:#1a1a1a; line-height:1.6;">Zeile 1: "Der Unterschied zwischen"<br>Orange: "Vorsatz und Ergebnis?"<br>Zeile 3: "Ein System."</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function update() {
+  const l1 = document.getElementById('line1').value;
+  const l2 = document.getElementById('line2').value;
+  const l3 = document.getElementById('line3').value;
+  const fs = document.getElementById('fontsize').value;
+  const num = document.getElementById('qnumber').value;
+
+  document.getElementById('preview-num').textContent = num;
+
+  let html = '';
+  if (l1) html += l1 + '<br>';
+  if (l2) html += '<span class="orange">' + l2 + '</span>';
+  if (l3) html += '<br>' + l3;
+  document.getElementById('preview-text').innerHTML = html;
+  document.getElementById('preview-text').style.fontSize = fs + 'px';
+}
+
+function copyQuotes() {
+  const box = document.getElementById('ideas-box');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+}
+
+function loadIdea(el) {
+  const lines = el.querySelectorAll('div')[1].innerHTML.split('<br>');
+  const l1 = lines[0].replace('Zeile 1: "','').replace('"','').trim();
+  const l2 = lines[1].replace('Orange: "','').replace('"','').trim();
+  const l3 = lines[2] ? lines[2].replace('Zeile 3: "','').replace('"','').trim() : '';
+  document.getElementById('line1').value = l1;
+  document.getElementById('line2').value = l2;
+  document.getElementById('line3').value = l3;
+  update();
+  document.getElementById('ideas-box').style.display = 'none';
+}
+
+function screenshotHint() {
+  const h = document.getElementById('hint-text');
+  h.innerHTML = '<strong>Mac:</strong> Cmd+Shift+4 → Karte markieren → gespeichert auf Desktop.<br><strong>Windows:</strong> Win+Shift+S → Karte markieren → in Canva einfügen (1080×1080px).<br><strong>Oder:</strong> Rechtsklick auf die Karte → "Als Bild speichern" (je nach Browser).';
+}
+
+update();
+</script>
+</body>
+</html>
