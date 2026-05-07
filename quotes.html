@@ -160,15 +160,9 @@ body { background:#2a2a2a; font-family:'DM Sans',sans-serif; display:flex; flex-
     <input type="text" id="line3" value="" placeholder="leer lassen wenn nicht gebraucht" oninput="update()">
   </div>
 
-  <div class="row">
-    <div class="field">
-      <label>Schriftgrösse (px)</label>
-      <input type="range" id="fontsize" min="18" max="42" value="30" oninput="update()">
-    </div>
-    <div class="field">
-      <label>Nr.</label>
-      <input type="text" id="qnumber" value="01" oninput="update()" style="max-width:60px;">
-    </div>
+  <div class="field">
+    <label>Schriftgrösse (px)</label>
+    <input type="range" id="fontsize" min="18" max="42" value="30" oninput="update()">
   </div>
 
   <div class="btn-row">
@@ -187,7 +181,6 @@ body { background:#2a2a2a; font-family:'DM Sans',sans-serif; display:flex; flex-
     <div class="qtop-glow"></div>
     <div class="qaccent"></div>
     <div class="qtop-bar"></div>
-    <div class="qnum" id="preview-num">01</div>
     <div class="qlogo">DW<span>·</span>BD</div>
 
     <div class="qtext" id="preview-text">
@@ -235,9 +228,6 @@ function update() {
   const l2 = document.getElementById('line2').value;
   const l3 = document.getElementById('line3').value;
   const fs = document.getElementById('fontsize').value;
-  const num = document.getElementById('qnumber').value;
-
-  document.getElementById('preview-num').textContent = num;
 
   let html = '';
   if (l1) html += l1 + '<br>';
